@@ -10,17 +10,9 @@ app.use(index);
 
 const server = http.createServer(app);
 
-const io = socketIo(server);
+const io = module.exports.io = socketIo(server);
+const SocketManager = require('./SocketManager')
 
-io.on('connection', socket => {
-  console.log("New client connected");
-
-  socket.on("message", message => {
-    console.log("Received message: ", message.text);
-  });
-
-
-  socket.on("disconnect", () => console.log("Client disconnected"));
-});
+io.on('connection', SocketManager);
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
