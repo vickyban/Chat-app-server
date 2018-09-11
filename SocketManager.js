@@ -6,7 +6,7 @@ const ADD_TYPING_USER = 'ADD_TYPING_USER';
 const REMOVE_TYPING_USER = 'REMOVE_TYPING_USER';
 
 
-const io = require('./index').io;
+const io = require('./server').io;
 
 module.exports = function (socket) {
   console.log("New client connected with socketId:", socket.id);
