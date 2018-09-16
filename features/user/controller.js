@@ -11,6 +11,10 @@ exports.user_login = async (req, res, next) => {
     // check pass
     res.status(200).json({
       message: 'Auth successful',
+      data: {
+        id: user[0]._id,
+        username,
+      },
       redirect: '/channel/' + username
     })
 
@@ -31,7 +35,7 @@ exports.user_signup = async (req, res, next) => {
     const user = new User({
       _id: mongoose.Types.ObjectId(),
       username,
-      password
+      password,
     });
 
     const result = await user.save();
