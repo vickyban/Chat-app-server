@@ -1,9 +1,9 @@
-const TYPING = 'TYPING';
-const SEND = 'SEND';
-const NEW_MESSAGE = 'message';
-const REPLYING = 'REPLYING';
-const ADD_TYPING_USER = 'ADD_TYPING_USER';
-const REMOVE_TYPING_USER = 'REMOVE_TYPING_USER';
+// const TYPING = 'TYPING';
+// const SEND = 'SEND';
+// const NEW_MESSAGE = 'message';
+// const REPLYING = 'REPLYING';
+// const ADD_TYPING_USER = 'ADD_TYPING_USER';
+// const REMOVE_TYPING_USER = 'REMOVE_TYPING_USER';
 
 
 const io = require('./server').io;
@@ -15,19 +15,19 @@ module.exports = function (socket) {
   console.log("New client connected with socketId:", socket.id);
 
   // create message
-  socket.on(NEW_MESSAGE, async (message) => {
+  socket.on('message', async (message) => {
     console.log('Received new msg from user');
     const newMsg = new Message({
       _id: mongoose.Types.ObjectId(),
       author: "anonymous",
       text: message.text,
-      room_name: message.room,
+      room_name: message.room_name,
       timestamp: Date.now()
     })
     try {
       const result = await newMsg.save();
       console.log()
-      socket.broadcast.to(message.room).emit('message', result);
+      socket.broadcast.to(message.room_name).emit('message', result);
     } catch (err) {
       console.log('failed to send new message')
     }
@@ -35,7 +35,7 @@ module.exports = function (socket) {
 
   // on typing
   socket.on('typing', data => {
-    socket.broadcast.emit('typing', data);
+    socket.broadcast.to(data.room).emit('typing', data);
   });
 
   // create and join room
@@ -50,10 +50,6 @@ module.exports = function (socket) {
       // after join greet the users
       socket.emit('welcome', { text: `You have joined ${roomName}` });
       socket.broadcast.to(roomName).emit('welcome', { text: `${username ? username : 'anonymous'} has joined the room` });
-
-
-
-
 
     }
   });
